@@ -1,0 +1,1005 @@
+{% comment %}
+  Main Product Section - Enhanced CRO
+  Estructura optimizada para conversión con sticky product info
+{% endcomment %}
+
+{{ 'section-main-product.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-rating.css' | asset_url | stylesheet_tag }}
+
+<style>
+  /* Sticky Product Info */
+  .product__info-container-sticky {
+    position: sticky;
+    top: 120px;
+    align-self: flex-start;
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+  }
+
+  /* Heading con líneas horizontales */
+  .heading-with-lines {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 2rem 0 1.5rem;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #333;
+  }
+
+  .heading-with-lines::before,
+  .heading-with-lines::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #E0E0E0;
+  }
+
+  .heading-with-lines span {
+    padding: 0 1.5rem;
+  }
+
+  /* Badge de urgencia estilo Dropverse */
+  .urgency-badge-box {
+    border: 2px solid #0059B2;
+    background: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 auto 1.5rem;
+    display: inline-block;
+    color: #0059B2;
+  }
+
+  /* Rating display */
+  .product__rating-display {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .rating-stars {
+    color: #FFB800;
+    font-size: 18px;
+    letter-spacing: 2px;
+    margin-bottom: 0.25rem;
+  }
+
+  .rating-text {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+  }
+
+  /* Título centrado */
+  .product__title-centered {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .product__title-centered h1 {
+    font-size: 28px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  /* Bullet points con emojis */
+  .product__bullets {
+    margin-bottom: 1.5rem;
+  }
+
+  .bullet-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .bullet-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 14px;
+    color: #555;
+  }
+
+  .bullet-emoji {
+    font-size: 20px;
+  }
+
+  /* Sección de precio */
+  .product__price-section {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .price-main {
+    font-size: 36px;
+    font-weight: 700;
+    color: #0059B2;
+    margin-bottom: 0.5rem;
+  }
+
+  .price-compare {
+    display: inline-block;
+    font-size: 20px;
+    color: #999;
+    text-decoration: line-through;
+    margin-right: 1rem;
+  }
+
+  .offer-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #0059B2;
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  /* Variant selector visual */
+  .variant-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .variant-card-large {
+    border: 2px solid #E0E0E0;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .variant-card-large:hover,
+  .variant-card-large.selected {
+    border-color: #0059B2;
+    box-shadow: 0 4px 12px rgba(0, 89, 178, 0.15);
+  }
+
+  .variant-card-large img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 0.75rem;
+    border-radius: 8px;
+  }
+
+  .variant-name {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+
+  .variant-badge-green {
+    background: #4CAF50;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+  }
+
+  .variant-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0059B2;
+  }
+
+  .popular-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #FF9800;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  /* Bundle selector avanzado */
+  .bundle-cards-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .bundle-card-horizontal {
+    border: 2px solid #E0E0E0;
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .bundle-card-horizontal:has(input:checked) {
+    border-color: #0059B2;
+    background: rgba(0, 89, 178, 0.03);
+  }
+
+  .bundle-card-horizontal input[type="radio"] {
+    display: none;
+  }
+
+  .bundle-card-horizontal label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    margin: 0;
+  }
+
+  .bundle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .bundle-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: #333;
+  }
+
+  .bundle-discount {
+    font-size: 13px;
+    color: #FF5252;
+    font-weight: 600;
+  }
+
+  .bundle-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0059B2;
+  }
+
+  .bundle-dropdowns {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #E0E0E0;
+    display: none;
+  }
+
+  .bundle-dropdowns.active {
+    display: block;
+  }
+
+  .variant-dropdown {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #E0E0E0;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* Botones CTA duales */
+  .product__cta-dual {
+    margin-bottom: 2rem;
+  }
+
+  .btn-primary-cta,
+  .btn-secondary-cta {
+    width: 100%;
+    padding: 16px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-primary-cta {
+    background: #0059B2;
+    color: white;
+    border: none;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 89, 178, 0.3);
+  }
+
+  .btn-primary-cta:hover {
+    background: #004494;
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary-cta {
+    background: transparent;
+    color: #0059B2;
+    border: 2px solid #0059B2;
+  }
+
+  .btn-secondary-cta:hover {
+    background: rgba(0, 89, 178, 0.05);
+  }
+
+  /* Trust signals */
+  .product__trust-signals {
+    margin-bottom: 2rem;
+  }
+
+  .payment-icons {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .payment-icon {
+    height: 28px;
+    opacity: 0.7;
+  }
+
+  .delivery-timeline-mini {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #F9F9F9;
+    border-radius: 8px;
+  }
+
+  .timeline-step {
+    flex: 1;
+    text-align: center;
+  }
+
+  .timeline-icon {
+    font-size: 24px;
+    margin-bottom: 0.25rem;
+  }
+
+  .timeline-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #666;
+  }
+
+  .timeline-line {
+    flex: 0 0 40px;
+    height: 2px;
+    background: #0059B2;
+  }
+
+  .mini-testimonial {
+    background: #F0F8FF;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .testimonial-stars {
+    color: #FFB800;
+    font-size: 16px;
+    margin-bottom: 0.5rem;
+  }
+
+  .testimonial-text {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 0.5rem;
+    font-style: italic;
+  }
+
+  .testimonial-verified {
+    font-size: 12px;
+    color: #4CAF50;
+    font-weight: 600;
+  }
+
+  /* Acordeones */
+  .product__accordion {
+    border-top: 1px solid #E0E0E0;
+  }
+
+  .accordion-item {
+    border-bottom: 1px solid #E0E0E0;
+  }
+
+  .accordion-summary {
+    padding: 1rem 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .accordion-content {
+    padding-bottom: 1rem;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  @media screen and (max-width: 749px) {
+    .product__info-container-sticky {
+      position: relative;
+      top: 0;
+    }
+
+    .variant-cards-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .price-main {
+      font-size: 28px;
+    }
+  }
+</style>
+
+<div class="page-width">
+  <div class="product grid grid--1-col grid--2-col-tablet">
+    
+    <!-- Galería de producto (izquierda) -->
+    <div class="grid__item product__media-wrapper">
+      {% render 'product-media-gallery' %}
+    </div>
+
+    <!-- Product Info (derecha, sticky) -->
+    <div class="grid__item product__info-wrapper">
+      <div class="product__info-container-sticky" id="ProductInfo-{{ section.id }}">
+        
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            
+            {%- when 'urgency_badge' -%}
+              <div class="product__urgency-badge" {{ block.shopify_attributes }}>
+                <div class="urgency-badge-box">
+                  {{ block.settings.badge_text }}
+                </div>
+              </div>
+
+            {%- when 'rating' -%}
+              <div class="product__rating-display" {{ block.shopify_attributes }}>
+                <div class="rating-stars">★★★★★</div>
+                <div class="rating-text">{{ block.settings.rating_text }}</div>
+              </div>
+
+            {%- when 'title' -%}
+              <div class="product__title-centered" {{ block.shopify_attributes }}>
+                <h1>{{ product.title }}</h1>
+              </div>
+
+            {%- when 'bullet_points' -%}
+              <div class="product__bullets" {{ block.shopify_attributes }}>
+                <ul class="bullet-list">
+                  {% for i in (1..5) %}
+                    {% assign bullet_emoji = 'bullet_' | append: i | append: '_emoji' %}
+                    {% assign bullet_text = 'bullet_' | append: i | append: '_text' %}
+                    {% if block.settings[bullet_text] != blank %}
+                      <li>
+                        <span class="bullet-emoji">{{ block.settings[bullet_emoji] }}</span>
+                        <span class="bullet-text">{{ block.settings[bullet_text] }}</span>
+                      </li>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              </div>
+
+            {%- when 'price' -%}
+              <div class="product__price-section" {{ block.shopify_attributes }}>
+                <div class="price-main">{{ product.selected_or_first_available_variant.price | money }}</div>
+                {% if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %}
+                  <div>
+                    <span class="price-compare">{{ product.selected_or_first_available_variant.compare_at_price | money }}</span>
+                    <span class="offer-badge">
+                      <span class="badge-icon">⏰</span>
+                      <span class="badge-text">{{ block.settings.offer_text }}</span>
+                    </span>
+                  </div>
+                {% endif %}
+              </div>
+
+            {%- when 'variant_selector_visual' -%}
+              <div class="product__variant-visual" {{ block.shopify_attributes }}>
+                <div class="heading-with-lines">
+                  <span>{{ block.settings.heading }}</span>
+                </div>
+                
+                <div class="variant-cards-grid">
+                  {% for variant in product.variants limit: 6 %}
+                    <div class="variant-card-large {% if variant == product.selected_or_first_available_variant %}selected{% endif %}" 
+                         data-variant-id="{{ variant.id }}"
+                         onclick="selectVariant({{ variant.id }})">
+                      {% if forloop.index == block.settings.popular_index %}
+                        <div class="popular-badge">{{ block.settings.popular_text }}</div>
+                      {% endif %}
+                      {% if variant.featured_image %}
+                        <img src="{{ variant.featured_image | image_url: width: 200 }}" alt="{{ variant.title }}" loading="lazy">
+                      {% else %}
+                        <img src="{{ product.featured_image | image_url: width: 200 }}" alt="{{ variant.title }}" loading="lazy">
+                      {% endif %}
+                      <div class="variant-name">{{ variant.title }}</div>
+                      <div class="variant-badge-green">{{ block.settings.badge_text }}</div>
+                      <div class="variant-price">{{ variant.price | money }}</div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+
+            {%- when 'bundle_selector_advanced' -%}
+              <div class="product__bundle-advanced" {{ block.shopify_attributes }}>
+                <div class="heading-with-lines">
+                  <span>{{ block.settings.heading }}</span>
+                </div>
+                
+                <div class="bundle-cards-vertical">
+                  {% assign base_price = product.selected_or_first_available_variant.price %}
+                  
+                  <!-- Bundle Individual -->
+                  <div class="bundle-card-horizontal">
+                    <input type="radio" name="bundle" id="bundle-1" value="1" checked>
+                    <label for="bundle-1">
+                      <div class="bundle-info">
+                        <span class="bundle-title">Paquete Individual - 1</span>
+                        <span class="bundle-discount">Ahorra €0</span>
+                      </div>
+                      <div class="bundle-price">{{ base_price | money }}</div>
+                    </label>
+                  </div>
+                  
+                  <!-- Bundle Dúo -->
+                  {% assign duo_total = base_price | times: 2 %}
+                  {% assign duo_discount = duo_total | times: 15 | divided_by: 100 %}
+                  {% assign duo_final = duo_total | minus: duo_discount %}
+                  <div class="bundle-card-horizontal">
+                    <input type="radio" name="bundle" id="bundle-2" value="2">
+                    <label for="bundle-2">
+                      <div class="bundle-info">
+                        <span class="bundle-title">Paquete Dúo - 2</span>
+                        <span class="bundle-discount">¡15% OFF!</span>
+                      </div>
+                      <div class="bundle-price">{{ duo_final | money }}</div>
+                    </label>
+                    <div class="bundle-dropdowns">
+                      <select class="variant-dropdown">
+                        <option>#1 - Selecciona color</option>
+                        {% for variant in product.variants limit: 6 %}
+                          <option value="{{ variant.id }}">#1 - {{ variant.title }}</option>
+                        {% endfor %}
+                      </select>
+                      <select class="variant-dropdown">
+                        <option>#2 - Selecciona color</option>
+                        {% for variant in product.variants limit: 6 %}
+                          <option value="{{ variant.id }}">#2 - {{ variant.title }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <!-- Bundle Familiar -->
+                  {% assign familiar_total = base_price | times: 4 %}
+                  {% assign familiar_discount = familiar_total | times: 25 | divided_by: 100 %}
+                  {% assign familiar_final = familiar_total | minus: familiar_discount %}
+                  <div class="bundle-card-horizontal">
+                    <input type="radio" name="bundle" id="bundle-3" value="4">
+                    <label for="bundle-3">
+                      <div class="bundle-info">
+                        <span class="bundle-title">Paquete Familiar - 4</span>
+                        <span class="bundle-discount">¡25% OFF!</span>
+                      </div>
+                      <div class="bundle-price">{{ familiar_final | money }}</div>
+                    </label>
+                    <div class="bundle-dropdowns">
+                      {% for i in (1..4) %}
+                        <select class="variant-dropdown">
+                          <option>#{{ i }} - Selecciona color</option>
+                          {% for variant in product.variants limit: 6 %}
+                            <option value="{{ variant.id }}">#{{ i }} - {{ variant.title }}</option>
+                          {% endfor %}
+                        </select>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            {%- when 'buy_buttons_dual' -%}
+              <div class="product__cta-dual" {{ block.shopify_attributes }}>
+                <button class="btn-primary-cta" onclick="addToCart()">
+                  {{ block.settings.primary_text }}
+                </button>
+                <button class="btn-secondary-cta" onclick="buyNow()">
+                  {{ block.settings.secondary_text }}
+                </button>
+              </div>
+
+            {%- when 'trust_signals' -%}
+              <div class="product__trust-signals" {{ block.shopify_attributes }}>
+                <!-- Payment Icons -->
+                <div class="payment-icons">
+                  <svg class="payment-icon" viewBox="0 0 40 25" fill="none"><rect width="40" height="25" rx="3" fill="#1434CB"/></svg>
+                  <svg class="payment-icon" viewBox="0 0 40 25" fill="none"><rect width="40" height="25" rx="3" fill="#FF5F00"/></svg>
+                  <svg class="payment-icon" viewBox="0 0 40 25" fill="none"><rect width="40" height="25" rx="3" fill="#00457C"/></svg>
+                  <svg class="payment-icon" viewBox="0 0 40 25" fill="none"><rect width="40" height="25" rx="3" fill="#000000"/></svg>
+                </div>
+                
+                <!-- Delivery Timeline -->
+                <div class="delivery-timeline-mini">
+                  <div class="timeline-step">
+                    <div class="timeline-icon">🛒</div>
+                    <div class="timeline-label">Pedido</div>
+                  </div>
+                  <div class="timeline-line"></div>
+                  <div class="timeline-step">
+                    <div class="timeline-icon">🚚</div>
+                    <div class="timeline-label">Enviado</div>
+                  </div>
+                  <div class="timeline-line"></div>
+                  <div class="timeline-step">
+                    <div class="timeline-icon">📦</div>
+                    <div class="timeline-label">Entregado</div>
+                  </div>
+                </div>
+                
+                <!-- Mini Testimonial -->
+                {% if block.settings.show_testimonial %}
+                  <div class="mini-testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <div class="testimonial-text">"{{ block.settings.testimonial_text }}"</div>
+                    <div class="testimonial-verified">✓ Compra Verificada</div>
+                  </div>
+                {% endif %}
+              </div>
+
+            {%- when 'accordion' -%}
+              <div class="product__accordion" {{ block.shopify_attributes }}>
+                <details class="accordion-item">
+                  <summary class="accordion-summary">
+                    <span>{{ block.settings.heading }}</span>
+                    <span>+</span>
+                  </summary>
+                  <div class="accordion-content">
+                    {{ block.settings.content }}
+                  </div>
+                </details>
+              </div>
+
+          {%- endcase -%}
+        {%- endfor -%}
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Variant selection
+  function selectVariant(variantId) {
+    document.querySelectorAll('.variant-card-large').forEach(card => {
+      card.classList.remove('selected');
+    });
+    event.currentTarget.classList.add('selected');
+    
+    // Update hidden input if exists
+    const variantInput = document.querySelector('input[name="id"]');
+    if (variantInput) {
+      variantInput.value = variantId;
+    }
+  }
+
+  // Bundle selector dropdowns
+  document.querySelectorAll('input[name="bundle"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      // Hide all dropdowns
+      document.querySelectorAll('.bundle-dropdowns').forEach(dd => {
+        dd.classList.remove('active');
+      });
+      
+      // Show dropdowns for selected bundle
+      const card = this.closest('.bundle-card-horizontal');
+      const dropdowns = card.querySelector('.bundle-dropdowns');
+      if (dropdowns && this.checked) {
+        dropdowns.classList.add('active');
+      }
+    });
+  });
+
+  // Add to cart function
+  function addToCart() {
+    const selectedBundle = document.querySelector('input[name="bundle"]:checked');
+    const quantity = parseInt(selectedBundle.value);
+    
+    // Get variant ID
+    const selectedVariant = document.querySelector('.variant-card-large.selected');
+    const variantId = selectedVariant ? selectedVariant.dataset.variantId : {{ product.selected_or_first_available_variant.id }};
+    
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: variantId,
+        quantity: quantity
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      window.location.href = '/cart';
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
+
+  // Buy now function
+  function buyNow() {
+    addToCart();
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Main Product - Enhanced CRO",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Configuración General"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "urgency_badge",
+      "name": "Badge de Urgencia",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Texto del badge",
+          "default": "PRODUCTO VIRAL | STOCK BAJO"
+        }
+      ]
+    },
+    {
+      "type": "rating",
+      "name": "Rating",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "rating_text",
+          "label": "Texto del rating",
+          "default": "4.9/5 (+859 Reseñas)"
+        }
+      ]
+    },
+    {
+      "type": "title",
+      "name": "Título del Producto",
+      "limit": 1
+    },
+    {
+      "type": "bullet_points",
+      "name": "Bullet Points",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "bullet_1_emoji",
+          "label": "Bullet 1 - Emoji",
+          "default": "🔋"
+        },
+        {
+          "type": "text",
+          "id": "bullet_1_text",
+          "label": "Bullet 1 - Texto",
+          "default": "Potencia duradera de la batería"
+        },
+        {
+          "type": "text",
+          "id": "bullet_2_emoji",
+          "label": "Bullet 2 - Emoji",
+          "default": "💾"
+        },
+        {
+          "type": "text",
+          "id": "bullet_2_text",
+          "label": "Bullet 2 - Texto",
+          "default": "Viene desde un 32 MP y 1080P"
+        },
+        {
+          "type": "text",
+          "id": "bullet_3_emoji",
+          "label": "Bullet 3 - Emoji",
+          "default": "📸"
+        },
+        {
+          "type": "text",
+          "id": "bullet_3_text",
+          "label": "Bullet 3 - Texto",
+          "default": "Lente doble de 1080P"
+        }
+      ]
+    },
+    {
+      "type": "price",
+      "name": "Precio",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "offer_text",
+          "label": "Texto del badge de oferta",
+          "default": "OFERTA HOY"
+        }
+      ]
+    },
+    {
+      "type": "variant_selector_visual",
+      "name": "Selector de Variantes Visual",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Título",
+          "default": "SELECCIONA COLOR"
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Texto del badge",
+          "default": "Envío Gratis"
+        },
+        {
+          "type": "text",
+          "id": "popular_text",
+          "label": "Texto 'Más Popular'",
+          "default": "MÁS POPULAR"
+        },
+        {
+          "type": "range",
+          "id": "popular_index",
+          "label": "Índice de variante popular (1-6)",
+          "min": 1,
+          "max": 6,
+          "default": 1
+        }
+      ]
+    },
+    {
+      "type": "bundle_selector_advanced",
+      "name": "Bundle Selector Avanzado",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Título",
+          "default": "LLEVAS MÁS Y PAGAS MENOS"
+        }
+      ]
+    },
+    {
+      "type": "buy_buttons_dual",
+      "name": "Botones CTA Duales",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "primary_text",
+          "label": "Texto botón primario",
+          "default": "AGREGAR AL CARRITO"
+        },
+        {
+          "type": "text",
+          "id": "secondary_text",
+          "label": "Texto botón secundario",
+          "default": "COMPRAR AHORA"
+        }
+      ]
+    },
+    {
+      "type": "trust_signals",
+      "name": "Trust Signals",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_testimonial",
+          "label": "Mostrar mini-testimonio",
+          "default": true
+        },
+        {
+          "type": "textarea",
+          "id": "testimonial_text",
+          "label": "Texto del testimonio",
+          "default": "Me encanta ya viene con 32gb, no tuve que comprar nada extra."
+        }
+      ]
+    },
+    {
+      "type": "accordion",
+      "name": "Acordeón",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Título",
+          "default": "Nuestra Garantía"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Contenido",
+          "default": "<p>Garantía de satisfacción del 100%</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Main Product - Enhanced",
+      "blocks": [
+        {
+          "type": "urgency_badge"
+        },
+        {
+          "type": "rating"
+        },
+        {
+          "type": "title"
+        },
+        {
+          "type": "bullet_points"
+        },
+        {
+          "type": "price"
+        },
+        {
+          "type": "variant_selector_visual"
+        },
+        {
+          "type": "bundle_selector_advanced"
+        },
+        {
+          "type": "buy_buttons_dual"
+        },
+        {
+          "type": "trust_signals"
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Nuestra Garantía"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Envío y Entrega"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
