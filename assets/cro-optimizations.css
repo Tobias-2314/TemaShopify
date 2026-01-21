@@ -1,0 +1,290 @@
+/* 
+ * CRO Optimizations CSS - Estilo Dropverse
+ * Estilos globales para landing page de alto rendimiento
+ */
+
+/* ===== CSS VARIABLES ===== */
+:root {
+  --cro-primary-blue: #0059B2;
+  --cro-primary-blue-dark: #004494;
+  --cro-urgent-red: #FF5252;
+  --cro-success-green: #4CAF50;
+  --cro-warning-orange: #FF9800;
+  --cro-star-yellow: #FFB800;
+  --cro-text-dark: #333333;
+  --cro-text-light: #666666;
+  --cro-border-light: #E0E0E0;
+  --cro-bg-light: #F9F9F9;
+}
+
+/* ===== OCULTAR NAVEGACIÓN (OPCIONAL) ===== */
+.cro-landing-page .header__menu-item,
+.cro-landing-page .header__search,
+.cro-landing-page .header__icons--localization {
+  display: none !important;
+}
+
+/* Mantener solo logo y carrito */
+.cro-landing-page .header {
+  justify-content: space-between;
+}
+
+/* ===== BOTONES CTA DE ALTO CONTRASTE ===== */
+.button--cro-primary,
+.shopify-payment-button__button--unbranded {
+  background: var(--cro-primary-blue) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  padding: 16px 32px !important;
+  border-radius: 8px !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 89, 178, 0.3) !important;
+  transition: all 0.3s ease !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.button--cro-primary:hover,
+.shopify-payment-button__button--unbranded:hover {
+  background: var(--cro-primary-blue-dark) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 89, 178, 0.4) !important;
+}
+
+/* ===== BADGES DE URGENCIA ===== */
+.urgency-badge,
+.scarcity-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #FF6B6B 0%, var(--cro-urgent-red) 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(255, 82, 82, 0.3);
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* ===== BADGES DE DESCUENTO ===== */
+.discount-badge,
+.savings-badge {
+  display: inline-block;
+  background: var(--cro-urgent-red);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ===== BADGES DE ÉXITO (ENVÍO GRATIS, ETC) ===== */
+.success-badge {
+  display: inline-block;
+  background: var(--cro-success-green);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ===== ESTRELLAS DE RATING ===== */
+.rating-stars {
+  color: var(--cro-star-yellow);
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+
+/* ===== ELIMINAR ANIMACIONES PESADAS ===== */
+@media (prefers-reduced-motion: no-preference) {
+  .motion-reduce,
+  .animate--slide-in,
+  .animate--fade-in {
+    animation: none !important;
+    transition: opacity 0.2s ease, transform 0.2s ease !important;
+  }
+}
+
+/* Desactivar animaciones de Dawn que ralentizan */
+.gradient {
+  background: none !important;
+}
+
+/* ===== OPTIMIZACIONES DE PERFORMANCE ===== */
+/* Lazy loading mejorado */
+img[loading="lazy"] {
+  content-visibility: auto;
+}
+
+/* Reducir reflows */
+.page-width {
+  contain: layout style;
+}
+
+/* ===== CARDS CON HOVER MEJORADO ===== */
+.cro-card {
+  border: 2px solid var(--cro-border-light);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
+}
+
+.cro-card:hover {
+  border-color: var(--cro-primary-blue);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== TRUST INDICATORS ===== */
+.trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 8px 16px;
+  background: #F0F8FF;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cro-primary-blue);
+}
+
+.trust-badge svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ===== PRICE STYLING ===== */
+.price--large {
+  font-size: 32px !important;
+  font-weight: 700 !important;
+  color: var(--cro-text-dark);
+}
+
+.price__sale .price-item--sale {
+  color: var(--cro-urgent-red);
+}
+
+/* ===== MOBILE OPTIMIZATIONS ===== */
+@media screen and (max-width: 749px) {
+  .button--cro-primary {
+    width: 100%;
+    padding: 14px 24px !important;
+  }
+
+  .price--large {
+    font-size: 24px !important;
+  }
+
+  /* Sticky elements más pequeños en mobile */
+  .sticky-atc-bar {
+    padding: 0.75rem 0;
+  }
+}
+
+/* ===== SCROLLBAR PERSONALIZADO ===== */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--cro-primary-blue);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cro-primary-blue-dark);
+}
+
+/* ===== FOCUS STATES MEJORADOS ===== */
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--cro-primary-blue);
+  outline-offset: 2px;
+}
+
+/* ===== LOADING STATES ===== */
+.loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid var(--cro-primary-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }
+.font-normal { font-weight: 400; }
+
+.uppercase { text-transform: uppercase; }
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+/* ===== RESPONSIVE HELPERS ===== */
+@media screen and (max-width: 749px) {
+  .hide-mobile { display: none !important; }
+}
+
+@media screen and (min-width: 750px) {
+  .hide-desktop { display: none !important; }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .sticky-atc-bar,
+  .urgency-badge,
+  .scarcity-badge {
+    display: none !important;
+  }
+}

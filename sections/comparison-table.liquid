@@ -1,0 +1,291 @@
+{% comment %}
+  Tabla Comparativa - ¿Por qué elegirnos?
+  Estilo Dropverse
+{% endcomment %}
+
+<style>
+  .comparison-section {
+    padding: 3rem 0;
+    background: {{ section.settings.section_bg }};
+  }
+
+  .comparison-heading {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: {{ section.settings.heading_color }};
+  }
+
+  .comparison-subheading {
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .comparison-table {
+    max-width: 700px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .comparison-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    background: {{ section.settings.header_bg }};
+    padding: 1.5rem 1rem;
+    font-weight: 700;
+    color: {{ section.settings.header_color }};
+  }
+
+  .comparison-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid #F0F0F0;
+    align-items: center;
+  }
+
+  .comparison-row:last-child {
+    border-bottom: none;
+  }
+
+  .comparison-row:nth-child(even) {
+    background: #FAFAFA;
+  }
+
+  .comparison-feature {
+    font-size: 15px;
+    color: #333;
+    font-weight: 500;
+  }
+
+  .comparison-check {
+    text-align: center;
+    font-size: 24px;
+  }
+
+  .check-yes {
+    color: {{ section.settings.check_color }};
+  }
+
+  .check-no {
+    color: {{ section.settings.cross_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .comparison-header,
+    .comparison-row {
+      grid-template-columns: 3fr 1fr 1fr;
+      font-size: 14px;
+    }
+
+    .comparison-feature {
+      font-size: 13px;
+    }
+  }
+</style>
+
+<div class="comparison-section">
+  <div class="page-width">
+    
+    {% if section.settings.heading != blank %}
+      <h2 class="comparison-heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    {% if section.settings.subheading != blank %}
+      <p class="comparison-subheading">{{ section.settings.subheading }}</p>
+    {% endif %}
+
+    <div class="comparison-table">
+      <div class="comparison-header">
+        <div></div>
+        <div style="text-align: center;">{{ section.settings.column1_name }}</div>
+        <div style="text-align: center;">{{ section.settings.column2_name }}</div>
+      </div>
+
+      {% for block in section.blocks %}
+        {% if block.type == 'feature' %}
+          <div class="comparison-row" {{ block.shopify_attributes }}>
+            <div class="comparison-feature">{{ block.settings.feature_text }}</div>
+            <div class="comparison-check">
+              {% if block.settings.column1_has %}
+                <span class="check-yes">✓</span>
+              {% else %}
+                <span class="check-no">✗</span>
+              {% endif %}
+            </div>
+            <div class="comparison-check">
+              {% if block.settings.column2_has %}
+                <span class="check-yes">✓</span>
+              {% else %}
+                <span class="check-no">✗</span>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Tabla Comparativa",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Textos"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título",
+      "default": "¿Por qué elegirnos?"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subtítulo",
+      "default": "Porque nuestra cámara es la mejor para tus queridos, estimula su imaginación, ofrece comodidad y garantiza seguridad en cada momento."
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color del título",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Columnas"
+    },
+    {
+      "type": "text",
+      "id": "column1_name",
+      "label": "Nombre columna 1",
+      "default": "Nosotros"
+    },
+    {
+      "type": "text",
+      "id": "column2_name",
+      "label": "Nombre columna 2",
+      "default": "Otros"
+    },
+    {
+      "type": "header",
+      "content": "Estilos"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Color de fondo de la sección",
+      "default": "#F9F9F9"
+    },
+    {
+      "type": "color",
+      "id": "header_bg",
+      "label": "Color de fondo del encabezado",
+      "default": "#0059B2"
+    },
+    {
+      "type": "color",
+      "id": "header_color",
+      "label": "Color del texto del encabezado",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "check_color",
+      "label": "Color de checkmarks (✓)",
+      "default": "#4CAF50"
+    },
+    {
+      "type": "color",
+      "id": "cross_color",
+      "label": "Color de X",
+      "default": "#999999"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Característica",
+      "settings": [
+        {
+          "type": "text",
+          "id": "feature_text",
+          "label": "Texto de la característica",
+          "default": "Tarjeta SD 32GB incluida"
+        },
+        {
+          "type": "checkbox",
+          "id": "column1_has",
+          "label": "Columna 1 tiene esta característica",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "column2_has",
+          "label": "Columna 2 tiene esta característica",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tabla Comparativa",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "feature_text": "Tarjeta SD 32GB incluida",
+            "column1_has": true,
+            "column2_has": false
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_text": "Batería larga duración",
+            "column1_has": true,
+            "column2_has": false
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_text": "Variedad modos fotográficos",
+            "column1_has": true,
+            "column2_has": false
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_text": "Precio justo y asequible",
+            "column1_has": true,
+            "column2_has": false
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "feature_text": "Diseñados para todas las edades",
+            "column1_has": true,
+            "column2_has": false
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,352 @@
+{% comment %}
+  Sección Hero con Urgencia - Estilo Dropverse
+  Totalmente personalizable desde el Theme Customizer
+{% endcomment %}
+
+{{ 'section-main-product.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-rating.css' | asset_url | stylesheet_tag }}
+
+<style>
+  .urgency-hero {
+    position: relative;
+    padding: 2rem 0;
+  }
+
+  .urgency-badge {
+    display: inline-block;
+    background: {{ section.settings.urgency_badge_bg }};
+    color: {{ section.settings.urgency_badge_color }};
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .product-rating-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .rating-stars {
+    color: #FFB800;
+    font-size: 16px;
+  }
+
+  .rating-text {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+  }
+
+  .price-wrapper-hero {
+    margin: 1.5rem 0;
+  }
+
+  .price-hero {
+    font-size: 32px;
+    font-weight: 700;
+    color: {{ section.settings.price_color }};
+  }
+
+  .price-compare {
+    font-size: 20px;
+    color: #999;
+    text-decoration: line-through;
+    margin-left: 1rem;
+  }
+
+  .discount-badge {
+    display: inline-block;
+    background: #FF5252;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-left: 1rem;
+  }
+
+  .variant-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .variant-card {
+    border: 2px solid #E0E0E0;
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .variant-card:hover {
+    border-color: {{ section.settings.variant_hover_color }};
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .variant-card.selected {
+    border-color: {{ section.settings.variant_selected_color }};
+    background: rgba(0, 89, 178, 0.05);
+  }
+
+  .variant-image {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin: 0 auto 0.5rem;
+  }
+
+  .variant-name {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 0.25rem;
+  }
+
+  .variant-badge {
+    display: inline-block;
+    background: #4CAF50;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
+
+  @media screen and (max-width: 749px) {
+    .variant-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .price-hero {
+      font-size: 24px;
+    }
+  }
+</style>
+
+<div class="urgency-hero page-width">
+  <div class="product-hero-content">
+    
+    {% if section.settings.show_urgency_badge %}
+      <div class="urgency-badge">
+        {{ section.settings.urgency_badge_text }}
+      </div>
+    {% endif %}
+
+    {% if section.settings.show_rating %}
+      <div class="product-rating-wrapper">
+        <div class="rating-stars">
+          ★★★★★
+        </div>
+        <span class="rating-text">{{ section.settings.rating_text }}</span>
+      </div>
+    {% endif %}
+
+    <h1 class="product-title h1">{{ product.title }}</h1>
+
+    {% if section.settings.show_description %}
+      <div class="product-description rte">
+        {{ product.description | truncate: 200 }}
+      </div>
+    {% endif %}
+
+    <div class="price-wrapper-hero">
+      <span class="price-hero">{{ product.selected_or_first_available_variant.price | money }}</span>
+      
+      {% if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %}
+        <span class="price-compare">{{ product.selected_or_first_available_variant.compare_at_price | money }}</span>
+        {% assign discount = product.selected_or_first_available_variant.compare_at_price | minus: product.selected_or_first_available_variant.price %}
+        {% assign discount_percent = discount | times: 100 | divided_by: product.selected_or_first_available_variant.compare_at_price %}
+        <span class="discount-badge">-{{ discount_percent }}%</span>
+      {% endif %}
+    </div>
+
+    {% if section.settings.show_variant_selector and product.variants.size > 1 %}
+      <div class="variant-selector-section">
+        <h3 class="h4">{{ section.settings.variant_heading }}</h3>
+        
+        <div class="variant-cards">
+          {% for variant in product.variants limit: 6 %}
+            <div class="variant-card {% if variant == product.selected_or_first_available_variant %}selected{% endif %}" 
+                 data-variant-id="{{ variant.id }}">
+              
+              {% if variant.featured_image %}
+                <img src="{{ variant.featured_image | image_url: width: 160 }}" 
+                     alt="{{ variant.title }}" 
+                     class="variant-image"
+                     loading="lazy">
+              {% else %}
+                <img src="{{ product.featured_image | image_url: width: 160 }}" 
+                     alt="{{ variant.title }}" 
+                     class="variant-image"
+                     loading="lazy">
+              {% endif %}
+              
+              <div class="variant-name">{{ variant.title }}</div>
+              <div class="variant-price">{{ variant.price | money }}</div>
+              
+              {% if section.settings.show_variant_badge %}
+                <div class="variant-badge">{{ section.settings.variant_badge_text }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<script>
+  // Variant selector functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const variantCards = document.querySelectorAll('.variant-card');
+    
+    variantCards.forEach(card => {
+      card.addEventListener('click', function() {
+        // Remove selected class from all cards
+        variantCards.forEach(c => c.classList.remove('selected'));
+        
+        // Add selected class to clicked card
+        this.classList.add('selected');
+        
+        // Update product form variant
+        const variantId = this.dataset.variantId;
+        const variantInput = document.querySelector('input[name="id"]');
+        if (variantInput) {
+          variantInput.value = variantId;
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Hero con Urgencia",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Badge de Urgencia"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_urgency_badge",
+      "label": "Mostrar badge de urgencia",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "urgency_badge_text",
+      "label": "Texto del badge",
+      "default": "PRODUCTO VIRAL | STOCK BAJO"
+    },
+    {
+      "type": "color",
+      "id": "urgency_badge_bg",
+      "label": "Color de fondo del badge",
+      "default": "#FF5252"
+    },
+    {
+      "type": "color",
+      "id": "urgency_badge_color",
+      "label": "Color del texto del badge",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Rating del Producto"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Mostrar rating",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "rating_text",
+      "label": "Texto del rating",
+      "default": "4.9/5 (+859 Reseñas)",
+      "info": "Ejemplo: 4.9/5 (+859 Reseñas)"
+    },
+    {
+      "type": "header",
+      "content": "Descripción"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Mostrar descripción",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Precio"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Color del precio",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Selector de Variantes"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_variant_selector",
+      "label": "Mostrar selector de variantes",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "variant_heading",
+      "label": "Título del selector",
+      "default": "SELECCIONA COLOR"
+    },
+    {
+      "type": "color",
+      "id": "variant_hover_color",
+      "label": "Color de borde al pasar el mouse",
+      "default": "#0059B2"
+    },
+    {
+      "type": "color",
+      "id": "variant_selected_color",
+      "label": "Color de borde seleccionado",
+      "default": "#0059B2"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_variant_badge",
+      "label": "Mostrar badge en variantes",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "variant_badge_text",
+      "label": "Texto del badge de variante",
+      "default": "Envío Gratis"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero con Urgencia"
+    }
+  ]
+}
+{% endschema %}

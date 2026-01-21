@@ -1,0 +1,393 @@
+{% comment %}
+  Sticky Add to Cart - Estilo Dropverse
+  Barra persistente en la parte inferior con selector de variante y botón de compra
+{% endcomment %}
+
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+
+<style>
+  .sticky-atc-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: {{ section.settings.bar_bg }};
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 999;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 1rem 0;
+  }
+
+  .sticky-atc-bar.visible {
+    transform: translateY(0);
+  }
+
+  .sticky-atc-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .sticky-product-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 0 0 auto;
+  }
+
+  .sticky-product-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .sticky-product-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: {{ section.settings.text_color }};
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sticky-variant-selector {
+    flex: 1;
+    max-width: 300px;
+  }
+
+  .sticky-variant-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #E0E0E0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    background: white;
+    cursor: pointer;
+  }
+
+  .sticky-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: {{ section.settings.price_color }};
+    white-space: nowrap;
+  }
+
+  .sticky-atc-button {
+    background: {{ section.settings.button_bg }};
+    color: {{ section.settings.button_color }};
+    border: none;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 89, 178, 0.3);
+  }
+
+  .sticky-atc-button:hover {
+    background: {{ section.settings.button_hover_bg }};
+    transform: scale(1.02);
+  }
+
+  .sticky-atc-button:disabled {
+    background: #CCCCCC;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .sticky-atc-content {
+      gap: 0.75rem;
+    }
+
+    .sticky-product-title {
+      display: none;
+    }
+
+    .sticky-variant-selector {
+      max-width: 150px;
+    }
+
+    .sticky-price {
+      font-size: 16px;
+    }
+
+    .sticky-atc-button {
+      padding: 12px 20px;
+      font-size: 14px;
+    }
+  }
+</style>
+
+<div class="sticky-atc-bar" id="stickyAtcBar">
+  <div class="sticky-atc-content">
+    
+    {% if section.settings.show_product_image %}
+      <div class="sticky-product-info">
+        {% if product.featured_image %}
+          <img 
+            src="{{ product.featured_image | image_url: width: 100 }}" 
+            alt="{{ product.title }}"
+            class="sticky-product-image">
+        {% endif %}
+        
+        {% if section.settings.show_product_title %}
+          <div class="sticky-product-title">{{ product.title }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if section.settings.show_variant_selector and product.variants.size > 1 %}
+      <div class="sticky-variant-selector">
+        <select 
+          class="sticky-variant-select" 
+          id="stickyVariantSelect"
+          onchange="updateStickyVariant(this.value)">
+          {% for variant in product.variants %}
+            <option 
+              value="{{ variant.id }}"
+              {% if variant == product.selected_or_first_available_variant %}selected{% endif %}
+              {% unless variant.available %}disabled{% endunless %}>
+              {{ variant.title }}
+              {% unless variant.available %} - Agotado{% endunless %}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    {% endif %}
+
+    {% if section.settings.show_price %}
+      <div class="sticky-price" id="stickyPrice">
+        {{ product.selected_or_first_available_variant.price | money }}
+      </div>
+    {% endif %}
+
+    <button 
+      class="sticky-atc-button" 
+      id="stickyAtcButton"
+      onclick="addToCartSticky()">
+      {{ section.settings.button_text }}
+    </button>
+
+  </div>
+</div>
+
+<script>
+  // Sticky ATC functionality
+  (function() {
+    const stickyBar = document.getElementById('stickyAtcBar');
+    const scrollThreshold = {{ section.settings.scroll_threshold }};
+    let currentVariantId = {{ product.selected_or_first_available_variant.id }};
+
+    // Show/hide sticky bar on scroll
+    function handleScroll() {
+      if (window.scrollY > scrollThreshold) {
+        stickyBar.classList.add('visible');
+      } else {
+        stickyBar.classList.remove('visible');
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial state
+
+    // Update variant
+    window.updateStickyVariant = function(variantId) {
+      currentVariantId = variantId;
+      
+      // Update price
+      fetch(`{{ product.url }}?variant=${variantId}`)
+        .then(response => response.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          // Update price if element exists
+          const priceElement = document.getElementById('stickyPrice');
+          if (priceElement) {
+            // This is a simplified version - you may need to adjust based on your theme
+            console.log('Variant updated:', variantId);
+          }
+        });
+
+      // Sync with main product form
+      const mainVariantInput = document.querySelector('input[name="id"]');
+      if (mainVariantInput) {
+        mainVariantInput.value = variantId;
+      }
+    };
+
+    // Add to cart
+    window.addToCartSticky = function() {
+      const button = document.getElementById('stickyAtcButton');
+      button.disabled = true;
+      button.textContent = '{{ section.settings.button_loading_text }}';
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: currentVariantId,
+          quantity: 1
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Redirect to cart or trigger cart drawer
+        {% if section.settings.redirect_to_cart %}
+          window.location.href = '/cart';
+        {% else %}
+          // Trigger cart drawer if available
+          if (typeof window.dispatchEvent === 'function') {
+            window.dispatchEvent(new CustomEvent('cart:refresh'));
+          }
+          button.textContent = '{{ section.settings.button_success_text }}';
+          setTimeout(() => {
+            button.textContent = '{{ section.settings.button_text }}';
+            button.disabled = false;
+          }, 2000);
+        {% endif %}
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        button.textContent = '{{ section.settings.button_text }}';
+        button.disabled = false;
+      });
+    };
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Sticky Add to Cart",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Configuración de Activación"
+    },
+    {
+      "type": "range",
+      "id": "scroll_threshold",
+      "label": "Píxeles de scroll para activar",
+      "min": 100,
+      "max": 1000,
+      "step": 50,
+      "default": 400,
+      "unit": "px",
+      "info": "El sticky ATC aparecerá después de hacer scroll esta cantidad"
+    },
+    {
+      "type": "header",
+      "content": "Elementos Visibles"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_image",
+      "label": "Mostrar imagen del producto",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_title",
+      "label": "Mostrar título del producto",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_variant_selector",
+      "label": "Mostrar selector de variante",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Mostrar precio",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Estilos"
+    },
+    {
+      "type": "color",
+      "id": "bar_bg",
+      "label": "Color de fondo de la barra",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Color del precio",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Botón"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texto del botón",
+      "default": "COMPRAR AHORA"
+    },
+    {
+      "type": "text",
+      "id": "button_loading_text",
+      "label": "Texto mientras carga",
+      "default": "Añadiendo..."
+    },
+    {
+      "type": "text",
+      "id": "button_success_text",
+      "label": "Texto de éxito",
+      "default": "¡Añadido! ✓"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Color de fondo del botón",
+      "default": "#0059B2"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Color del texto del botón",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg",
+      "label": "Color de fondo al pasar el mouse",
+      "default": "#004494"
+    },
+    {
+      "type": "checkbox",
+      "id": "redirect_to_cart",
+      "label": "Redirigir al carrito después de añadir",
+      "default": true,
+      "info": "Si está desactivado, intentará abrir el cart drawer"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sticky Add to Cart"
+    }
+  ]
+}
+{% endschema %}

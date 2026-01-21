@@ -1,0 +1,304 @@
+{% comment %}
+  Timeline de Entrega - Estilo Dropverse
+  Muestra el proceso de pedido a entrega con fechas calculadas
+{% endcomment %}
+
+<style>
+  .delivery-timeline-section {
+    padding: 3rem 0;
+    background: {{ section.settings.section_bg }};
+  }
+
+  .timeline-heading {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+    color: {{ section.settings.heading_color }};
+  }
+
+  .timeline-container {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 0 2rem;
+  }
+
+  .timeline-line {
+    position: absolute;
+    top: 30px;
+    left: 15%;
+    right: 15%;
+    height: 3px;
+    background: {{ section.settings.line_color }};
+    z-index: 0;
+  }
+
+  .timeline-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .timeline-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: {{ section.settings.icon_bg }};
+    color: {{ section.settings.icon_color }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 28px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 3px solid white;
+  }
+
+  .timeline-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+
+  .timeline-date {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+  }
+
+  .payment-icons {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #E0E0E0;
+  }
+
+  .payment-icons img {
+    height: 30px;
+    margin: 0 8px;
+    opacity: 0.7;
+  }
+
+  @media screen and (max-width: 749px) {
+    .timeline-container {
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .timeline-line {
+      display: none;
+    }
+
+    .timeline-step {
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="delivery-timeline-section">
+  <div class="page-width">
+    
+    {% if section.settings.heading != blank %}
+      <h2 class="timeline-heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="timeline-container">
+      <div class="timeline-line"></div>
+
+      {% for block in section.blocks %}
+        {% if block.type == 'step' %}
+          {% assign days_from_now = block.settings.days_from_now %}
+          {% assign future_date = 'now' | date: '%s' | plus: days_from_now | times: 86400 | date: block.settings.date_format %}
+          
+          <div class="timeline-step" {{ block.shopify_attributes }}>
+            <div class="timeline-icon" style="background: {{ block.settings.icon_bg }}; color: {{ block.settings.icon_color }};">
+              {{ block.settings.icon_emoji }}
+            </div>
+            <div class="timeline-title">{{ block.settings.title }}</div>
+            <div class="timeline-date">{{ future_date }}</div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {% if section.settings.show_payment_icons %}
+      <div class="payment-icons">
+        {% if section.settings.payment_text != blank %}
+          <p style="margin-bottom: 1rem; color: #666;">{{ section.settings.payment_text }}</p>
+        {% endif %}
+        <div>
+          <svg width="40" height="25" viewBox="0 0 40 25" fill="none"><rect width="40" height="25" rx="3" fill="#1434CB"/><path d="M16.5 12.5L13.5 9.5L12 11L16.5 15.5L28.5 3.5L27 2L16.5 12.5Z" fill="white"/></svg>
+          <svg width="40" height="25" viewBox="0 0 40 25" fill="none"><rect width="40" height="25" rx="3" fill="#FF5F00"/><circle cx="15" cy="12.5" r="7" fill="#EB001B"/><circle cx="25" cy="12.5" r="7" fill="#F79E1B"/></svg>
+          <svg width="40" height="25" viewBox="0 0 40 25" fill="none"><rect width="40" height="25" rx="3" fill="#00457C"/><path d="M12 8H28V17H12V8Z" fill="#FFF"/></svg>
+          <svg width="40" height="25" viewBox="0 0 40 25" fill="none"><rect width="40" height="25" rx="3" fill="#6772E5"/></svg>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Timeline de Entrega",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Configuración General"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título de la sección",
+      "default": "Tu pedido llegará en:"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color del título",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Color de fondo",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Estilos de Timeline"
+    },
+    {
+      "type": "color",
+      "id": "line_color",
+      "label": "Color de la línea conectora",
+      "default": "#0059B2"
+    },
+    {
+      "type": "color",
+      "id": "icon_bg",
+      "label": "Color de fondo de iconos",
+      "default": "#0059B2"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Color de iconos",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Iconos de Pago"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Mostrar iconos de métodos de pago",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "payment_text",
+      "label": "Texto sobre iconos de pago",
+      "default": "Pago 100% seguro"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Paso del Timeline",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título del paso",
+          "default": "Pedido"
+        },
+        {
+          "type": "text",
+          "id": "icon_emoji",
+          "label": "Emoji/Icono",
+          "default": "📦",
+          "info": "Usa un emoji o símbolo"
+        },
+        {
+          "type": "number",
+          "id": "days_from_now",
+          "label": "Días desde hoy",
+          "default": 0,
+          "info": "0 = hoy, 1 = mañana, etc."
+        },
+        {
+          "type": "select",
+          "id": "date_format",
+          "label": "Formato de fecha",
+          "options": [
+            {
+              "value": "%d %b",
+              "label": "21 Ene"
+            },
+            {
+              "value": "%d/%m",
+              "label": "21/01"
+            },
+            {
+              "value": "%d de %B",
+              "label": "21 de Enero"
+            }
+          ],
+          "default": "%d %b"
+        },
+        {
+          "type": "color",
+          "id": "icon_bg",
+          "label": "Color de fondo del icono",
+          "default": "#0059B2"
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Color del icono",
+          "default": "#FFFFFF"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Timeline de Entrega",
+      "blocks": [
+        {
+          "type": "step",
+          "settings": {
+            "title": "Pedido",
+            "icon_emoji": "📦",
+            "days_from_now": 0
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Enviado",
+            "icon_emoji": "🚚",
+            "days_from_now": 2
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "title": "Entregado",
+            "icon_emoji": "✅",
+            "days_from_now": 5
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

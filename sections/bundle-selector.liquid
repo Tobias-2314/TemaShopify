@@ -1,0 +1,457 @@
+{% comment %}
+  Bundle Selector - Compra Más y Ahorra
+  Estilo Dropverse - Totalmente personalizable
+{% endcomment %}
+
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+
+<style>
+  .bundle-selector-section {
+    padding: 3rem 0;
+    background: {{ section.settings.section_bg }};
+  }
+
+  .bundle-heading {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    color: {{ section.settings.heading_color }};
+  }
+
+  .bundles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .bundle-card {
+    border: 3px solid #E0E0E0;
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    background: white;
+  }
+
+  .bundle-card:hover {
+    border-color: {{ section.settings.hover_border_color }};
+    transform: translateY(-8px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .bundle-card.selected {
+    border-color: {{ section.settings.selected_border_color }};
+    background: rgba(0, 89, 178, 0.03);
+  }
+
+  .bundle-card.popular {
+    border-color: {{ section.settings.popular_border_color }};
+  }
+
+  .popular-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: {{ section.settings.popular_badge_bg }};
+    color: {{ section.settings.popular_badge_color }};
+    padding: 6px 20px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .bundle-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+
+  .bundle-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 1rem;
+  }
+
+  .bundle-pricing {
+    margin: 1.5rem 0;
+  }
+
+  .bundle-price-current {
+    font-size: 32px;
+    font-weight: 700;
+    color: {{ section.settings.price_color }};
+  }
+
+  .bundle-price-original {
+    font-size: 18px;
+    color: #999;
+    text-decoration: line-through;
+    margin-left: 0.5rem;
+  }
+
+  .bundle-savings {
+    display: inline-block;
+    background: #FF5252;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 0.5rem;
+  }
+
+  .bundle-per-unit {
+    font-size: 14px;
+    color: #666;
+    margin-top: 0.5rem;
+  }
+
+  .bundle-cta {
+    width: 100%;
+    background: {{ section.settings.cta_bg }};
+    color: {{ section.settings.cta_color }};
+    border: none;
+    padding: 14px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+  }
+
+  .bundle-cta:hover {
+    background: {{ section.settings.cta_hover_bg }};
+    transform: scale(1.02);
+  }
+
+  @media screen and (max-width: 749px) {
+    .bundles-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="bundle-selector-section">
+  <div class="page-width">
+    
+    {% if section.settings.heading != blank %}
+      <h2 class="bundle-heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="bundles-grid">
+      {% for block in section.blocks %}
+        {% if block.type == 'bundle' %}
+          {% assign quantity = block.settings.quantity %}
+          {% assign discount_percent = block.settings.discount_percent %}
+          
+          {% comment %} Calculate prices {% endcomment %}
+          {% assign base_price = product.selected_or_first_available_variant.price %}
+          {% assign total_original = base_price | times: quantity %}
+          {% assign discount_amount = total_original | times: discount_percent | divided_by: 100 %}
+          {% assign total_discounted = total_original | minus: discount_amount %}
+          {% assign price_per_unit = total_discounted | divided_by: quantity %}
+          
+          <div class="bundle-card {% if block.settings.is_popular %}popular{% endif %}" 
+               data-quantity="{{ quantity }}"
+               data-price="{{ total_discounted }}"
+               {{ block.shopify_attributes }}>
+            
+            {% if block.settings.is_popular %}
+              <div class="popular-badge">{{ section.settings.popular_text }}</div>
+            {% endif %}
+
+            <div class="bundle-title">{{ block.settings.title }}</div>
+            
+            {% if block.settings.subtitle != blank %}
+              <div class="bundle-subtitle">{{ block.settings.subtitle }}</div>
+            {% endif %}
+
+            <div class="bundle-pricing">
+              <div>
+                <span class="bundle-price-current">{{ total_discounted | money }}</span>
+                {% if discount_percent > 0 %}
+                  <span class="bundle-price-original">{{ total_original | money }}</span>
+                {% endif %}
+              </div>
+
+              {% if discount_percent > 0 %}
+                {% assign savings = total_original | minus: total_discounted %}
+                <div class="bundle-savings">
+                  {% if section.settings.show_savings_euro %}
+                    Ahorra {{ savings | money }}
+                  {% else %}
+                    -{{ discount_percent }}%
+                  {% endif %}
+                </div>
+              {% endif %}
+
+              {% if section.settings.show_per_unit %}
+                <div class="bundle-per-unit">
+                  {{ price_per_unit | money }} / unidad
+                </div>
+              {% endif %}
+            </div>
+
+            <button class="bundle-cta" 
+                    onclick="addBundleToCart({{ product.selected_or_first_available_variant.id }}, {{ quantity }})">
+              {{ section.settings.cta_text }}
+            </button>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function addBundleToCart(variantId, quantity) {
+    // Add to cart functionality
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: variantId,
+        quantity: quantity
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Redirect to cart or show notification
+      window.location.href = '/cart';
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
+
+  // Bundle card selection
+  document.addEventListener('DOMContentLoaded', function() {
+    const bundleCards = document.querySelectorAll('.bundle-card');
+    
+    bundleCards.forEach(card => {
+      card.addEventListener('click', function(e) {
+        if (!e.target.classList.contains('bundle-cta')) {
+          bundleCards.forEach(c => c.classList.remove('selected'));
+          this.classList.add('selected');
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Bundle Selector",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Configuración General"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título de la sección",
+      "default": "LLEVAS MÁS Y PAGAS MENOS"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color del título",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Color de fondo de la sección",
+      "default": "#F9F9F9"
+    },
+    {
+      "type": "header",
+      "content": "Estilos de Cards"
+    },
+    {
+      "type": "color",
+      "id": "hover_border_color",
+      "label": "Color de borde al pasar el mouse",
+      "default": "#0059B2"
+    },
+    {
+      "type": "color",
+      "id": "selected_border_color",
+      "label": "Color de borde seleccionado",
+      "default": "#0059B2"
+    },
+    {
+      "type": "color",
+      "id": "popular_border_color",
+      "label": "Color de borde 'Más Popular'",
+      "default": "#FF9800"
+    },
+    {
+      "type": "header",
+      "content": "Badge 'Más Popular'"
+    },
+    {
+      "type": "text",
+      "id": "popular_text",
+      "label": "Texto del badge",
+      "default": "MÁS POPULAR"
+    },
+    {
+      "type": "color",
+      "id": "popular_badge_bg",
+      "label": "Color de fondo del badge",
+      "default": "#FF9800"
+    },
+    {
+      "type": "color",
+      "id": "popular_badge_color",
+      "label": "Color del texto del badge",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Precios"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Color del precio",
+      "default": "#000000"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_savings_euro",
+      "label": "Mostrar ahorro en euros (en vez de %)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_per_unit",
+      "label": "Mostrar precio por unidad",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Botón CTA"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Texto del botón",
+      "default": "AGREGAR AL CARRITO"
+    },
+    {
+      "type": "color",
+      "id": "cta_bg",
+      "label": "Color de fondo del botón",
+      "default": "#0059B2"
+    },
+    {
+      "type": "color",
+      "id": "cta_color",
+      "label": "Color del texto del botón",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "cta_hover_bg",
+      "label": "Color de fondo al pasar el mouse",
+      "default": "#004494"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "bundle",
+      "name": "Bundle",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título del bundle",
+          "default": "Paquete Dúo - 2"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtítulo (opcional)",
+          "info": "Ejemplo: Ahorra €23"
+        },
+        {
+          "type": "number",
+          "id": "quantity",
+          "label": "Cantidad de productos",
+          "default": 2
+        },
+        {
+          "type": "range",
+          "id": "discount_percent",
+          "label": "Descuento (%)",
+          "min": 0,
+          "max": 50,
+          "step": 5,
+          "default": 15,
+          "info": "Porcentaje de descuento sobre el precio total"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_popular",
+          "label": "Marcar como 'Más Popular'",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bundle Selector",
+      "blocks": [
+        {
+          "type": "bundle",
+          "settings": {
+            "title": "Paquete Individual - 1",
+            "subtitle": "Ahorra €0",
+            "quantity": 1,
+            "discount_percent": 0,
+            "is_popular": false
+          }
+        },
+        {
+          "type": "bundle",
+          "settings": {
+            "title": "Paquete Dúo - 2",
+            "subtitle": "¡15% OFF!",
+            "quantity": 2,
+            "discount_percent": 15,
+            "is_popular": true
+          }
+        },
+        {
+          "type": "bundle",
+          "settings": {
+            "title": "Paquete Familiar - 4",
+            "subtitle": "¡30% OFF!",
+            "quantity": 4,
+            "discount_percent": 30,
+            "is_popular": false
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

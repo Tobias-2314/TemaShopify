@@ -1,0 +1,297 @@
+{% comment %}
+  Testimonios con Fotos - Estilo Dropverse
+  Reseñas de clientes con fotos y ratings
+{% endcomment %}
+
+<style>
+  .photo-testimonials-section {
+    padding: 3rem 0;
+    background: {{ section.settings.section_bg }};
+  }
+
+  .testimonials-heading {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+    color: {{ section.settings.heading_color }};
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .testimonial-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .testimonial-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .testimonial-photo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .testimonial-info {
+    flex: 1;
+  }
+
+  .testimonial-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: #333;
+    margin-bottom: 0.25rem;
+  }
+
+  .testimonial-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 12px;
+    color: #4CAF50;
+    font-weight: 600;
+  }
+
+  .testimonial-rating {
+    color: {{ section.settings.star_color }};
+    font-size: 16px;
+    margin-bottom: 0.75rem;
+  }
+
+  .testimonial-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 1rem;
+  }
+
+  .testimonial-date {
+    font-size: 12px;
+    color: #999;
+  }
+
+  @media screen and (max-width: 989px) {
+    .testimonials-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .testimonials-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="photo-testimonials-section">
+  <div class="page-width">
+    
+    {% if section.settings.heading != blank %}
+      <h2 class="testimonials-heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="testimonials-grid">
+      {% for block in section.blocks %}
+        {% if block.type == 'testimonial' %}
+          <div class="testimonial-card" {{ block.shopify_attributes }}>
+            
+            <div class="testimonial-header">
+              {% if block.settings.photo != blank %}
+                <img 
+                  src="{{ block.settings.photo | image_url: width: 100 }}" 
+                  alt="{{ block.settings.customer_name }}"
+                  class="testimonial-photo"
+                  loading="lazy">
+              {% else %}
+                <div class="testimonial-photo" style="background: #E0E0E0;"></div>
+              {% endif %}
+
+              <div class="testimonial-info">
+                <div class="testimonial-name">{{ block.settings.customer_name }}</div>
+                {% if block.settings.show_verified %}
+                  <div class="testimonial-verified">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <path d="M7 0L8.5 5.5L14 7L8.5 8.5L7 14L5.5 8.5L0 7L5.5 5.5L7 0Z" fill="#4CAF50"/>
+                    </svg>
+                    Compra Verificada
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="testimonial-rating">
+              {% assign rating = block.settings.rating | floor %}
+              {% for i in (1..5) %}
+                {% if i <= rating %}
+                  ★
+                {% else %}
+                  ☆
+                {% endif %}
+              {% endfor %}
+            </div>
+
+            <div class="testimonial-text">
+              {{ block.settings.testimonial_text }}
+            </div>
+
+            {% if block.settings.date != blank %}
+              <div class="testimonial-date">{{ block.settings.date }}</div>
+            {% endif %}
+
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Testimonios con Fotos",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Configuración General"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título de la sección",
+      "default": "Nuestros Clientes."
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color del título",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Color de fondo",
+      "default": "#F9F9F9"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columnas en desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Color de las estrellas",
+      "default": "#FFB800"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonio",
+      "limit": 20,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "photo",
+          "label": "Foto del cliente"
+        },
+        {
+          "type": "text",
+          "id": "customer_name",
+          "label": "Nombre del cliente",
+          "default": "María García"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Calificación (estrellas)",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "testimonial_text",
+          "label": "Texto del testimonio",
+          "default": "¡Me encanta! La lente doble a 1080P hacen que los videos se vean súper bien."
+        },
+        {
+          "type": "checkbox",
+          "id": "show_verified",
+          "label": "Mostrar badge 'Compra Verificada'",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Fecha (opcional)",
+          "info": "Ejemplo: Hace 2 días"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonios con Fotos",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "customer_name": "Laura M.",
+            "rating": 5,
+            "testimonial_text": "La lente doble a 1080P hacen que los videos se vean súper bien.",
+            "show_verified": true
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "customer_name": "Carlos R.",
+            "rating": 5,
+            "testimonial_text": "Me encanta ya viene con 32gb, no tuve que comprar nada extra.",
+            "show_verified": true
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "customer_name": "Ana P.",
+            "rating": 5,
+            "testimonial_text": "Diseñados para todas las edades. Regalo perfecto para mis hijos.",
+            "show_verified": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
