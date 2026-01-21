@@ -1,141 +1,37 @@
 {
   "sections": {
-    "main_product_enhanced": {
-      "type": "main-product-enhanced",
-      "blocks": {
-        "urgency_badge": {
-          "type": "urgency_badge",
-          "settings": {
-            "badge_text": "PRODUCTO VIRAL | STOCK BAJO"
-          }
-        },
-        "rating": {
-          "type": "rating",
-          "settings": {
-            "rating_text": "4.9/5 (+859 Reseñas)"
-          }
-        },
-        "title": {
-          "type": "title"
-        },
-        "bullet_points": {
-          "type": "bullet_points",
-          "settings": {
-            "bullet_1_emoji": "🔋",
-            "bullet_1_text": "Potencia duradera de la batería",
-            "bullet_2_emoji": "💾",
-            "bullet_2_text": "Viene desde un 32 MP y 1080P",
-            "bullet_3_emoji": "📸",
-            "bullet_3_text": "Lente doble de 1080P"
-          }
-        },
-        "price": {
-          "type": "price",
-          "settings": {
-            "offer_text": "OFERTA HOY"
-          }
-        },
-        "variant_selector_visual": {
-          "type": "variant_selector_visual",
-          "settings": {
-            "heading": "SELECCIONA COLOR",
-            "badge_text": "Envío Gratis",
-            "popular_text": "MÁS POPULAR",
-            "popular_index": 1
-          }
-        },
-        "bundle_selector_advanced": {
-          "type": "bundle_selector_advanced",
-          "settings": {
-            "heading": "LLEVAS MÁS Y PAGAS MENOS"
-          }
-        },
-        "buy_buttons_dual": {
-          "type": "buy_buttons_dual",
-          "settings": {
-            "primary_text": "AGREGAR AL CARRITO",
-            "secondary_text": "COMPRAR AHORA"
-          }
-        },
-        "trust_signals": {
-          "type": "trust_signals",
-          "settings": {
-            "show_testimonial": true,
-            "testimonial_text": "Me encanta ya viene con 32gb, no tuve que comprar nada extra."
-          }
-        },
-        "accordion_1": {
-          "type": "accordion",
-          "settings": {
-            "heading": "Nuestra Garantía",
-            "content": "<p>Garantía de satisfacción del 100%. Si no estás completamente satisfecho con tu compra, te devolvemos tu dinero.</p>"
-          }
-        },
-        "accordion_2": {
-          "type": "accordion",
-          "settings": {
-            "heading": "Envío y Entrega",
-            "content": "<p>Envío gratis en todos los pedidos. Entrega en 3-5 días laborables.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "urgency_badge",
-        "rating",
-        "title",
-        "bullet_points",
-        "price",
-        "variant_selector_visual",
-        "bundle_selector_advanced",
-        "buy_buttons_dual",
-        "trust_signals",
-        "accordion_1",
-        "accordion_2"
-      ]
-    },
-    "bundle_selector": {
-      "type": "bundle-selector",
-      "blocks": {
-        "bundle_1": {
-          "type": "bundle",
-          "settings": {
-            "title": "Paquete Individual - 1",
-            "subtitle": "Ahorra €0",
-            "quantity": 1,
-            "discount_percent": 0,
-            "is_popular": false
-          }
-        },
-        "bundle_2": {
-          "type": "bundle",
-          "settings": {
-            "title": "Paquete Dúo - 2",
-            "subtitle": "¡15% OFF!",
-            "quantity": 2,
-            "discount_percent": 15,
-            "is_popular": true
-          }
-        },
-        "bundle_3": {
-          "type": "bundle",
-          "settings": {
-            "title": "Paquete Familiar - 4",
-            "subtitle": "¡30% OFF!",
-            "quantity": 4,
-            "discount_percent": 30,
-            "is_popular": false
-          }
-        }
-      },
-      "block_order": [
-        "bundle_1",
-        "bundle_2",
-        "bundle_3"
-      ],
+    "featured_product_hero": {
+      "type": "featured-product-hero",
       "settings": {
-        "heading": "LLEVAS MÁS Y PAGAS MENOS",
-        "heading_color": "#000000",
-        "section_bg": "#F9F9F9"
+        "show_urgency_badge": true,
+        "urgency_badge_text": "PRODUCTO VIRAL | STOCK BAJO",
+        "show_rating": true,
+        "rating_text": "4.9/5 (+859 Reseñas)",
+        "show_bullets": true,
+        "bullet_1_emoji": "🔋",
+        "bullet_1_text": "Potencia duradera de la batería",
+        "bullet_2_emoji": "💾",
+        "bullet_2_text": "Viene desde un 32 MP y 1080P",
+        "bullet_3_emoji": "📸",
+        "bullet_3_text": "Lente doble de 1080P",
+        "offer_text": "OFERTA HOY",
+        "show_variants": true,
+        "variant_heading": "SELECCIONA COLOR",
+        "variant_badge_text": "Envío Gratis",
+        "popular_text": "MÁS POPULAR",
+        "popular_index": 1,
+        "show_bundles": true,
+        "bundle_heading": "LLEVAS MÁS Y PAGAS MENOS",
+        "primary_button_text": "AGREGAR AL CARRITO",
+        "secondary_button_text": "VER MÁS DETALLES",
+        "show_testimonial": true,
+        "testimonial_text": "Me encanta ya viene con 32gb, no tuve que comprar nada extra.",
+        "show_accordion_1": true,
+        "accordion_1_heading": "Nuestra Garantía",
+        "accordion_1_content": "<p>Garantía de satisfacción del 100%. Si no estás completamente satisfecho con tu compra, te devolvemos tu dinero.</p>",
+        "show_accordion_2": true,
+        "accordion_2_heading": "Envío y Entrega",
+        "accordion_2_content": "<p>Envío gratis en todos los pedidos. Entrega en 3-5 días laborables.</p>"
       }
     },
     "instagram_stories": {
@@ -270,7 +166,7 @@
     }
   },
   "order": [
-    "main_product_enhanced",
+    "featured_product_hero",
     "instagram_stories",
     "photo_testimonials",
     "comparison_table",
