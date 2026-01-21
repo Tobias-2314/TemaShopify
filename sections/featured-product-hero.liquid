@@ -46,11 +46,11 @@
     padding: 0 1.5rem;
   }
 
-  /* Badge de urgencia */
+  /* Badge de urgencia con animación */
   .urgency-badge-box {
     border: 2px solid #0059B2;
-    background: white;
-    padding: 10px 20px;
+    background: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
+    padding: 12px 24px;
     border-radius: 8px;
     text-align: center;
     font-size: 11px;
@@ -60,6 +60,13 @@
     margin: 0 auto 1.5rem;
     display: inline-block;
     color: #0059B2;
+    box-shadow: 0 2px 8px rgba(0, 89, 178, 0.15);
+    animation: pulse-subtle 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-subtle {
+    0%, 100% { transform: scale(1); box-shadow: 0 2px 8px rgba(0, 89, 178, 0.15); }
+    50% { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0, 89, 178, 0.25); }
   }
 
   /* Rating display */
@@ -166,14 +173,22 @@
     padding: 1rem;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    background: white;
   }
 
-  .variant-card-large:hover,
+  .variant-card-large:hover {
+    border-color: #0059B2;
+    box-shadow: 0 8px 20px rgba(0, 89, 178, 0.2);
+    transform: translateY(-4px);
+  }
+
   .variant-card-large.selected {
     border-color: #0059B2;
-    box-shadow: 0 4px 12px rgba(0, 89, 178, 0.15);
+    background: linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%);
+    box-shadow: 0 8px 24px rgba(0, 89, 178, 0.25);
+    transform: translateY(-2px);
   }
 
   .variant-card-large img {
@@ -232,14 +247,39 @@
   .bundle-card-horizontal {
     border: 2px solid #E0E0E0;
     border-radius: 12px;
-    padding: 1rem;
+    padding: 1.25rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bundle-card-horizontal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 89, 178, 0.05), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .bundle-card-horizontal:hover::before {
+    left: 100%;
+  }
+
+  .bundle-card-horizontal:hover {
+    border-color: #0059B2;
+    box-shadow: 0 4px 16px rgba(0, 89, 178, 0.15);
+    transform: translateX(4px);
   }
 
   .bundle-card-horizontal:has(input:checked) {
     border-color: #0059B2;
-    background: rgba(0, 89, 178, 0.03);
+    background: linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%);
+    box-shadow: 0 6px 20px rgba(0, 89, 178, 0.2);
   }
 
   .bundle-card-horizontal input[type="radio"] {
@@ -318,26 +358,74 @@
   }
 
   .btn-primary-cta {
-    background: #0059B2;
+    background: linear-gradient(135deg, #0059B2 0%, #004494 100%);
     color: white;
     border: none;
     margin-bottom: 1rem;
     box-shadow: 0 4px 12px rgba(0, 89, 178, 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary-cta::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .btn-primary-cta:hover::before {
+    width: 300px;
+    height: 300px;
   }
 
   .btn-primary-cta:hover {
-    background: #004494;
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, #004494 0%, #003366 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 89, 178, 0.4);
+  }
+
+  .btn-primary-cta:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 89, 178, 0.3);
   }
 
   .btn-secondary-cta {
     background: transparent;
     color: #0059B2;
     border: 2px solid #0059B2;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .btn-secondary-cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 89, 178, 0.1), transparent);
+    transition: left 0.5s ease;
+    z-index: -1;
+  }
+
+  .btn-secondary-cta:hover::before {
+    left: 100%;
   }
 
   .btn-secondary-cta:hover {
     background: rgba(0, 89, 178, 0.05);
+    border-color: #004494;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 89, 178, 0.15);
   }
 
   /* Trust signals */
@@ -466,13 +554,21 @@
     object-fit: cover;
     border-radius: 8px;
     cursor: pointer;
-    border: 2px solid transparent;
-    transition: all 0.3s ease;
+    border: 3px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .thumbnail:hover,
+  .thumbnail:hover {
+    border-color: #0059B2;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 89, 178, 0.2);
+  }
+
   .thumbnail.active {
     border-color: #0059B2;
+    box-shadow: 0 4px 16px rgba(0, 89, 178, 0.3);
+    transform: scale(1.05);
   }
 
   @media screen and (max-width: 749px) {
@@ -772,57 +868,208 @@
 </div>
 
 <script>
+  // Variables globales
   let selectedVariantId = {{ featured_product.selected_or_first_available_variant.id }};
+  let selectedVariantPrice = {{ featured_product.selected_or_first_available_variant.price }};
 
+  // Cambiar imagen principal con animación suave
   function changeMainImage(imageUrl, thumbnail) {
-    document.getElementById('mainImage').src = imageUrl;
+    const mainImage = document.getElementById('mainImage');
+    
+    // Fade out
+    mainImage.style.opacity = '0';
+    
+    setTimeout(() => {
+      mainImage.src = imageUrl;
+      // Fade in
+      mainImage.style.opacity = '1';
+    }, 200);
+    
+    // Actualizar thumbnails
     document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
     thumbnail.classList.add('active');
   }
 
+  // Seleccionar variante con feedback visual
   function selectVariantFeatured(variantId, element) {
     selectedVariantId = variantId;
+    
+    // Obtener precio de la variante del data attribute o del elemento
+    const priceElement = element.querySelector('.variant-price');
+    if (priceElement) {
+      const priceText = priceElement.textContent;
+      // Extraer número del precio
+      selectedVariantPrice = parseFloat(priceText.replace(/[^0-9.]/g, '')) * 100;
+    }
+    
+    // Actualizar selección visual
     document.querySelectorAll('.variant-card-large').forEach(card => {
       card.classList.remove('selected');
     });
     element.classList.add('selected');
+    
+    // Animación de feedback
+    element.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      element.style.transform = '';
+    }, 150);
+    
+    // Actualizar precio principal si existe
+    updateMainPrice();
   }
 
-  // Bundle selector dropdowns
-  document.querySelectorAll('input[name="bundle-featured"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-      document.querySelectorAll('.bundle-dropdowns').forEach(dd => {
-        dd.classList.remove('active');
-      });
+  // Actualizar precio principal basado en bundle y variante seleccionada
+  function updateMainPrice() {
+    const selectedBundle = document.querySelector('input[name="bundle-featured"]:checked');
+    const quantity = parseInt(selectedBundle.value);
+    const priceElement = document.querySelector('.price-main');
+    
+    if (priceElement && selectedVariantPrice) {
+      let totalPrice = selectedVariantPrice * quantity;
       
-      const card = this.closest('.bundle-card-horizontal');
-      const dropdowns = card.querySelector('.bundle-dropdowns');
-      if (dropdowns && this.checked) {
-        dropdowns.classList.add('active');
+      // Aplicar descuento según bundle
+      if (quantity === 2) {
+        totalPrice = totalPrice * 0.85; // 15% off
+      } else if (quantity === 4) {
+        totalPrice = totalPrice * 0.75; // 25% off
       }
+      
+      // Formatear precio (esto es una aproximación, Shopify formateará correctamente)
+      const formattedPrice = (totalPrice / 100).toFixed(2);
+      priceElement.textContent = '€' + formattedPrice;
+    }
+  }
+
+  // Bundle selector con dropdowns dinámicos
+  document.addEventListener('DOMContentLoaded', function() {
+    // Añadir transición suave a la imagen principal
+    const mainImage = document.getElementById('mainImage');
+    if (mainImage) {
+      mainImage.style.transition = 'opacity 0.3s ease';
+    }
+    
+    // Bundle selector listeners
+    document.querySelectorAll('input[name="bundle-featured"]').forEach(radio => {
+      radio.addEventListener('change', function() {
+        // Ocultar todos los dropdowns con animación
+        document.querySelectorAll('.bundle-dropdowns').forEach(dd => {
+          dd.style.maxHeight = dd.scrollHeight + 'px';
+          setTimeout(() => {
+            dd.classList.remove('active');
+            dd.style.maxHeight = '0';
+          }, 10);
+        });
+        
+        // Mostrar dropdowns de la card seleccionada con animación
+        const card = this.closest('.bundle-card-horizontal');
+        const dropdowns = card.querySelector('.bundle-dropdowns');
+        
+        if (dropdowns && this.checked) {
+          setTimeout(() => {
+            dropdowns.classList.add('active');
+            dropdowns.style.maxHeight = '0';
+            setTimeout(() => {
+              dropdowns.style.maxHeight = dropdowns.scrollHeight + 'px';
+            }, 10);
+          }, 300);
+        }
+        
+        // Actualizar precio
+        updateMainPrice();
+        
+        // Feedback visual en la card
+        card.style.transform = 'scale(0.98)';
+        setTimeout(() => {
+          card.style.transform = '';
+        }, 150);
+      });
+    });
+    
+    // Añadir estilos para animación de dropdowns
+    document.querySelectorAll('.bundle-dropdowns').forEach(dd => {
+      dd.style.maxHeight = '0';
+      dd.style.overflow = 'hidden';
+      dd.style.transition = 'max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
     });
   });
 
+  // Añadir al carrito con feedback visual mejorado
   function addToCartFeatured() {
+    const button = document.querySelector('.btn-primary-cta');
+    const originalText = button.textContent;
+    
+    // Deshabilitar botón
+    button.disabled = true;
+    button.style.opacity = '0.7';
+    button.textContent = 'Añadiendo...';
+    
     const selectedBundle = document.querySelector('input[name="bundle-featured"]:checked');
     const quantity = parseInt(selectedBundle.value);
     
+    // Preparar items para añadir al carrito
+    const items = [];
+    
+    if (quantity === 1) {
+      // Bundle individual
+      items.push({
+        id: selectedVariantId,
+        quantity: 1
+      });
+    } else {
+      // Bundle múltiple - obtener variantes de los dropdowns
+      const card = selectedBundle.closest('.bundle-card-horizontal');
+      const dropdowns = card.querySelectorAll('.variant-dropdown');
+      
+      dropdowns.forEach(dropdown => {
+        const variantId = dropdown.value;
+        if (variantId && variantId !== dropdown.options[0].value) {
+          items.push({
+            id: parseInt(variantId),
+            quantity: 1
+          });
+        }
+      });
+      
+      // Si no se seleccionaron variantes específicas, usar la variante seleccionada
+      if (items.length === 0) {
+        items.push({
+          id: selectedVariantId,
+          quantity: quantity
+        });
+      }
+    }
+    
+    // Añadir items al carrito
     fetch('/cart/add.js', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        id: selectedVariantId,
-        quantity: quantity
-      })
+      body: JSON.stringify({ items: items })
     })
     .then(response => response.json())
     .then(data => {
-      window.location.href = '/cart';
+      // Éxito - mostrar feedback
+      button.textContent = '¡Añadido! ✓';
+      button.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
+      
+      setTimeout(() => {
+        window.location.href = '/cart';
+      }, 800);
     })
     .catch(error => {
       console.error('Error:', error);
+      
+      // Error - mostrar feedback
+      button.textContent = 'Error - Intenta de nuevo';
+      button.style.background = 'linear-gradient(135deg, #FF5252 0%, #e04848 100%)';
+      
+      setTimeout(() => {
+        button.disabled = false;
+        button.style.opacity = '1';
+        button.textContent = originalText;
+        button.style.background = '';
+      }, 2000);
     });
   }
 </script>
